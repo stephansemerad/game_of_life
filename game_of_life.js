@@ -9,7 +9,7 @@ function make2DArray(cols, rows) {
 let grid;
 let cols;
 let rows;
-let resolution = 20;
+let resolution = 40;
 
 function setup() {
   createCanvas(400, 400);
@@ -41,6 +41,7 @@ function draw() {
       }
     }
   }
+  compute();
 }
 
 let next = make2DArray(cols, rows);
@@ -48,9 +49,36 @@ let next = make2DArray(cols, rows);
 function compute() {
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
-      //count live neighbors!
-      let sum = 0;
-      sum += gris[i][j];
+      // count live neighbors of 1, 1!
+      //   0,0 | 1,0 | 2,0
+      //   0,1 | 1,1 | 2,1
+      //   0,2 | 1,2 | 2,2
+
+      //state of 1 alive 0 dead
+      //   0 | 1 | 0
+      //   0 | 1 | 1
+      //   0 | 1 | 1
+
+      // result should be 5 -1 (center ignored) = 4
+
+      let sum = 0; // 1,1
+      let neighbors = countNeighbors(grid, i, j);
+      if (i == 2 && j == 2) {
+        console.log((i, j), "neighbors", neighbors);
+      }
     }
   }
+}
+
+function countNeighbors(grid, x, y) {
+  let sum = 0;
+  for (let i = -1; i < 2; i++) {
+    for (let j = -1; j < 2; j++) {
+      let col = (x + i + cols) % cols;
+      let row = (y + j + rows) % rows;
+      sum += grid[col][row];
+    }
+  }
+  sum -= grid[x][y];
+  return sum;
 }
